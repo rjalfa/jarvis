@@ -54,6 +54,10 @@ var routes = function(app) {
         res.render('showTemp');
     });
 
+    app.get('/control',function(req,res){
+        res.render('control');
+    });
+
     app.post('/temp',function(req,res) {
         currentTemp = req.query['temp'];
         res.send("200 ok");
