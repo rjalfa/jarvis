@@ -1,6 +1,9 @@
 var path = require('path'),
     fs = require('fs');
 
+
+var allMacs = "No macs"    
+
 var mainRoutes = [];
 
 var requireRoutes = function(dir, app) {
@@ -38,8 +41,14 @@ var routes = function(app) {
     app.get('/', function(req, res) {
         res.render('index', { mainRoutes : mainRoutes });
     })
+
+    app.get('/showMacs', function(req, res) {
+        res.send(allMacs);
+    })
+
     app.post('/',function(req,res) {
         console.log(req.query['bmac']);
+        allMacs = (req.query['bmac']);
         res.end("200 ok");
     })
 }
