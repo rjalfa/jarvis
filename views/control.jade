@@ -2,6 +2,30 @@ extends layout
 
 block content
   script(src='/js/control.js')
-  .jumbotron
-    | Fridge
-    input(type='checkbox', name='my-checkbox', checked='checked')
+  .jumbotron.appcontrol
+    h1 Appliance Control
+    br
+    .container
+    .row
+      .col-sm-6 Fridge
+      |     
+      .col-sm-6
+        input(type='checkbox', name='my-checkbox', checked='checked', data-off-color='warning')
+    br
+    .row
+      .col-sm-6 Music Player
+      |     
+      .col-sm-6
+        input(type='checkbox', name='my-checkbox', checked='checked', data-off-color='warning')
+    br
+    .row
+      .col-sm-6 Oven
+      |     
+      .col-sm-6
+        input(type='checkbox', name='my-checkbox', checked='checked', data-off-color='warning')
+    br
+    .row
+      .col-sm-6 Laptop
+      |     
+      .col-sm-6
+        input(type='checkbox', name='my-checkbox', checked='checked', data-off-color='warning')
