@@ -1,0 +1,23 @@
+extends ../layout
+
+block content
+  h2.display-data User Detail
+            
+  table.table.table-bordered
+    tr
+      th Property
+      th Value
+        tr
+          td Name
+          td= display(user.name)
+        tr
+          td Bmac
+          td= display(user.bmac)
+
+
+  .form-actions
+    a.btn.btn-warning(href="/users") Back
+    | 
+    a.btn.btn-primary(href="/users/" + user._id + "/edit") Edit
+    | 
+    a.btn.btn-danger(href="/users/" + user._id + "/delete") Delete

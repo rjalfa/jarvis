@@ -1,0 +1,21 @@
+extends ../layout
+include ../mixins/form-helpers
+
+block content
+  form#user-form(action="/users/" + user._id + "/edit", method="POST", role="form")
+    fieldset
+      legend Edit User
+
+      .form-group
+        mixin label("name", "Name")
+        mixin text("name", user.name)
+        mixin errorMessage(user, 'name')
+      .form-group
+        mixin label("bmac", "Bmac")
+        mixin text("bmac", user.bmac)
+        mixin errorMessage(user, 'bmac')
+
+    .form-actions
+      a.btn.btn-warning(href="/users") Back
+      | 
+      input.btn.btn-primary(type="submit", value="Save")
