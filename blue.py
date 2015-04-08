@@ -1,11 +1,12 @@
 import bluetooth
 import os 
 import time
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
+import requests
 
 #For Arduino
-#import serial 
-#ser = serial.Serial('/dev/ttyACM0',  115200, timeout = 0.1) 
+import serial 
+ser = serial.Serial('/dev/ttyACM0',  115200, timeout = 0.1) 
 
 #Not too sure about this:
 
@@ -23,13 +24,13 @@ import time
 # ser.write('3')
 
 # Using BCM GPIO 00..nn numbers
-#GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)
 
 # Set relay pins as output
-#GPIO.setup(18, GPIO.OUT)
-#GPIO.setup(23, GPIO.OUT)
-#GPIO.setup(24, GPIO.OUT)
-#GPIO.setup(25, GPIO.OUT)
+GPIO.setup(18, GPIO.OUT)
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT)
+GPIO.setup(25, GPIO.OUT)
 
 count=0
 empty=0
@@ -52,7 +53,7 @@ while(1):
 
 	# os.system('clear')
 	lol=bluetooth.discover_devices(duration=1,lookup_names=True)
-	print lol
+	# print lol
 	# print "count is ",count
 	# for p in range(len(lol)):
 		# print lol[p][0]+"           "+lol[p][1]
@@ -61,11 +62,11 @@ while(1):
 	if(signal!=5):
 		if(signal<0):
 			signal*=(-1)
-			#GPIO.output(appl[signal],GPIO.LOW)
+			GPIO.output(appl[signal],GPIO.LOW)
 			print names[signal]," was switched off"
 			#Send confirmation,maybe?
 		else:
-			#GPIO.output(appl[signal],GPIO.HIGH)
+			GPIO.output(appl[signal],GPIO.HIGH)
 			print names[signal]," was switched on"
 			#Send confirmation,maybe?
 		signal=5 #Reset	
