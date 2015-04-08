@@ -3,7 +3,7 @@ var path = require('path'),
 
 
 var allMacs = "No macs"    
-
+var currentTemp = "0";
 var mainRoutes = [];
 
 var requireRoutes = function(dir, app) {
@@ -40,16 +40,29 @@ var routes = function(app) {
     // Defines the root page. can be safely removed!
     app.get('/', function(req, res) {
         res.render('index', { mainRoutes : mainRoutes });
-    })
+    });
 
     app.get('/showMacs', function(req, res) {
         res.send(allMacs);
-    })
+    });
+
+    app.get('/showData', function(req, res) {
+        res.send(currentTemp);
+    });
+
+    app.get('/monitor',function(req,res){
+        res.render('showTemp');
+    });
+
+    app.post('/temp',function(req,res) {
+        currentTemp = req.query['temp'];
+        res.send("200 ok");
+    });
 
     app.post('/',function(req,res) {
         console.log(req.query['bmac']);
         allMacs = (req.query['bmac']);
-        res.end("200 ok");
+        res.send("200 ok");
     })
 }
 
