@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  h2.display-data Delete User?
+            
+  table.table.table-bordered
+    tr
+      th Property
+      th Value
+        tr
+          td Name
+          td= display(user.name)
+        tr
+          td Bmac
+          td= display(user.bmac)
+
+
+  form#user-form.form-horizontal(action="/users/" + user._id + "/delete", method="POST")
+    .form-actions
+      a.btn.btn-warning(href="/users") Back
+      | 
+      input.btn.btn-danger(type="submit", value="Delete")

@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+  h2.display-data All Users
+    a.btn.btn-primary.pull-right(href="/users/create") Create a new User
+
+  table.table.table-bordered.table-striped
+    tr
+        th Name
+        th Bmac
+        th
+
+    each user in users
+      tr
+        td= display(user.name)
+        td= display(user.bmac)
+
+        td
+          a(href="/users/" + user._id + "/detail", title="Detail")
+            i.glyphicon.glyphicon-search
+          | 
+          a(href="/users/" + user._id + "/edit", title="Edit")
+            i.glyphicon.glyphicon-pencil
+          | 
+          a(href="/users/" + user._id + "/delete", title="Delete")
+            i.glyphicon.glyphicon-ban-circle

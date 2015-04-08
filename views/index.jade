@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  center
+    img(src='/images/logo-big.jpeg')
+  h2.display-data Routes
+  ul
+    each route in mainRoutes
+      li
+        a(href="#{route.route}")= route.name

@@ -1,0 +1,36 @@
+doctype 5
+html
+  head
+    title JARVIS
+    meta(charset='UTF-8')-
+    link(href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css', rel='stylesheet')
+    link(href='/css/roboto.min.css', rel='stylesheet')
+    link(href='/css/material.min.css', rel='stylesheet')
+    link(href='/css/ripples.min.css', rel='stylesheet')
+    link(href='/css/custom.css', rel='stylesheet')
+    block scripts
+      script(src='http://code.jquery.com/jquery-1.10.2.min.js')
+      script(src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
+      script(src='/js/ripples.min.js')
+      script(src='/js/material.min.js')
+
+  body
+    div.navbar.navbar-inverse.navbar-static-top(role='navigation')
+      .container
+        .navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/') JARVIS HomeAuto | Control Center
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='/') home
+      script(src='http://code.jquery.com/jquery-1.10.2.min.js')
+      script(src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js')
+      script(src='js/ripples.min.js')
+      script(src='js/material.min.js')
+    .container
+      block content
