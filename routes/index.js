@@ -4,6 +4,7 @@ var path = require('path'),
 
 var allMacs = "No macs"    
 var currentTemp = "0";
+var appStates = [0,0,0,0];
 var mainRoutes = [];
 
 var requireRoutes = function(dir, app) {
@@ -63,11 +64,19 @@ var routes = function(app) {
         res.send("200 ok");
     });
 
+    app.post('/postApp',function(req,res) {
+        console.log(req.body);
+    });
+
+    app.get('/data',function(req,res){
+        res.send(appStates);
+    });
+
     app.post('/',function(req,res) {
         console.log(req.query['bmac']);
         allMacs = (req.query['bmac']);
         res.send("200 ok");
-    })
+    });
 }
 
 module.exports = routes;

@@ -1,9 +1,8 @@
+
 $(document).ready(function(){
 	$("[name='my-checkbox']").bootstrapSwitch();
-	$("#box1").change(dataHandler);
+	$("[name='my-checkbox']").on('switchChange.bootstrapSwitch',function(){
+		$.post('/postApp',{"0":$("#box1").bootstrapSwitch('state'),"1":$("#box2").bootstrapSwitch('state'),"2":$("#box3").bootstrapSwitch('state'),"3":$("#box4").bootstrapSwitch('state')},function(data,status,xhr){
+		},"json");
+	});
 });
-
-function dataHandler()
-{
-	alert("changed value");
-}
