@@ -2,9 +2,9 @@ var path = require('path'),
     fs = require('fs');
 
 
-var allMacs = "No macs"    
+var allMacs = "No Registered Users"    
 var currentTemp = "0";
-var appStates = [0,0,0,0];
+var appStates = [false,false,false,false];
 var mainRoutes = [];
 
 var requireRoutes = function(dir, app) {
@@ -51,6 +51,10 @@ var routes = function(app) {
         res.send(currentTemp);
     });
 
+    app.get('/showApp', function(req, res) {
+        res.send(appStates);
+    });
+
     app.get('/monitor',function(req,res){
         res.render('showTemp');
     });
@@ -65,16 +69,17 @@ var routes = function(app) {
     });
 
     app.post('/postApp',function(req,res) {
-        console.log(req.body);
+        for(var i=0;i<4;i++) appStates[i] = req.body[i.toString()];
+        res.send("200 ok");
     });
 
     app.get('/data',function(req,res){
-        res.send(appStates);
+        res.send(appStates.join());
     });
 
     app.post('/',function(req,res) {
-        console.log(req.query['bmac']);
-        allMacs = (req.query['bmac']);
+        if(allMacs === "No Registered Users") allMacs=""; 
+        allMacs += req.query['bmac']+"\n";
         res.send("200 ok");
     });
 }
