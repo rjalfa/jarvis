@@ -3,118 +3,117 @@ import os
 import time
 import RPi.GPIO as GPIO
 #import requests
+import serial
+#AC/Heater range [18,45]
 
-#For Arduino
-import serial 
-#ser = serial.Serial('/dev/ttyACM0',  115200, timeout = 0.1) 
 
-#Not too sure about this:
-
-# def send(x):
-#   ser.write(x)
-#   while True:
-#     try:
-#       time.sleep(0.01)
-#       break
-#     except:
-#       pass
-#   time.sleep(0.1)
-
-# reading=ser.readline()
-# ser.write('3')
-
-# Using BCM GPIO 00..nn numbers
+# BCM for GPIO pins (read nos in rectangles)
 GPIO.setmode(GPIO.BCM)
 
-# Set relay pins as output
+# Set pins for usage
 GPIO.setup(18, GPIO.OUT)
 GPIO.setup(23, GPIO.OUT)
 GPIO.setup(24, GPIO.OUT)
 GPIO.setup(25, GPIO.OUT)
 
-count=0
-empty=0
-nppl=0
 
-appl=[18,23,24,25] #Assuming 4 appliances on 18,23,24,25 respectively
-names={18:'Fridge',23:'Television',24:'Laptop Charger',25:'Music System'}
 
-signal=0 #Contains the index of the appliance to be switched on/off (+ve means 'ON',-ve means 'OFF')
-#Value 5 means no change to be done
+countRoomEmpty = 0 		# Number of seconds for which nobody in room
+roomIsEmpty = 1 		# If room empty: 1, else: 0
+nosPeople = 0 			# Number of people in the room
 
-inside_temp=26
-set_temp=25
-ac_temp=25
+applianceGPIO = [18, 23, 24, 25] 										#Assuming 4 appliances on 18,23,24,25 respectively
+applianceName = {18:'Fridge', 23:'Music System', 24:'Laptop Charger', 25:'Oven'}
+applianceOn = [0, 0, 0, 0] 												#Tells whether appliance is ON or OFF
 
-d = 0
+signal = 5 																# 1-indexing : + means ON,-ve means OFF ??
+																		# Value 5 means no change to be done
+																		# Used 1-indexing as +/-ve 0 make no sense
+
+set_temp = 25
+ac_temp = 25
+
 ac_incriment=0
 
-try:
-	print "MAC Address                 Name"
-	while(1):
+# send_to_server={'temp':inside_temp,'appliances[]':applianceOn } #Server Part
+# r=requests.get('http://localhost:3000',params=...) #:-?
+# s=requests.post("http://localhost:3000",data=send_to_server)
 
-		# os.system('clear')
-		lol=bluetooth.discover_devices(duration=1,lookup_names=True)
-		# print lol
-		# print "count is ",count
-		# for p in range(len(lol)):
-			# print lol[p][0]+"           "+lol[p][1]
+while(1):
+	try:
+		# Get data from Arduino DHT11
+		serialData = serial.Serial('/dev/ttyUSB0',9600)							# BEWARE use lsusb to see bus number (USB0/ USB1....)
+		tempSensor = int(serialData.readline().split(" ")[0][:-3])
+		humSensor = int(serialData.readline().split(" ")[1][:-4])
 
-		#Get signal from server ()
+		arrMAC = bluetooth.discover_devices()								# add parameter duration = secToScan if needed	
+		print arrMAC
+
+		#Get signal from server () 
 		if(signal!=5):
 			if(signal<0):
 				signal*=(-1)
-				GPIO.output(appl[signal],GPIO.LOW)
-				print names[signal]," was switched off"
-				#Send confirmation,maybe?
+				GPIO.output(applianceGPIO[signal-1],GPIO.LOW)
+				print applianceName [ applianceGPIO[signal-1]]," was switched off"
+				#Update data at server
 			else:
-				GPIO.output(appl[signal],GPIO.HIGH)
-				print names[signal]," was switched on"
-				#Send confirmation,maybe?
+				GPIO.output(applianceGPIO[signal-1],GPIO.HIGH)
+				print applianceName [ [signal-1]]," was switched on"
+				#Update data at server
 			signal=5 #Reset	
 
-		if(len(lol)==0):
-			if(not empty):
+		if(len(arrMAC)==0):
+			if(not roomIsEmpty):
 				# print " * Nobody Home"
-				count+=1
+				countRoomEmpty+=1
 			else:
-				count=0
-
-		if(empty==1):
+				countRoomEmpty=0
+		else:
+			if(roomIsEmpty==1):
 				print "Powering up"
+
 				# print "Power up A/C & lights"
-			empty=0
+				for i in range(4):
+					GPIO.output(applianceGPIO[i],GPIO.HIGH)
+				#Update data on server
 
-		if(count==10):
-			print "Powering down"
-			# print "Power down all appliances"
-			count=0	
-			empty=1
+			roomIsEmpty=0
 
-		if(inside_temp>60):
+		# Power Down if no people for >= 4sec
+		if(countRoomEmpty == 4):
+			print "Powering Down"
+			for i in range(4):
+				GPIO.output(applianceGPIO[i],GPIO.LOW)
+
+			countRoomEmpty = 0	
+			roomIsEmpty = 1
+
+		# If fire, stop to all devices and stop home automation MAYBE trigger siren
+		if(tempSensor > 60.0):
 			print "Fire! Run!"
-			# print "Emergency stop to all devices"
+			for i in range(4):
+				GPIO.output(applianceGPIO[i],GPIO.LOW)
 			break
 
-		if(empty!=1):
-			if(inside_temp < set_temp):
-				ac_incriment=1
+		if(roomIsEmpty != 1):
+			if (tempSensor < set_temp):
+				ac_incriment = 1
 
-			elif(inside_temp > set_temp):
-				ac_incriment=-1
+			elif (tempSensor > set_temp):
+				ac_incriment = -1
 
-			if(nppl>len(lol)+5): #More than 5 people entering should cause a sufficient change in room temperature because of body-heat
-				ac_incriment+=-1
+			if (nosPeople > len(arrMAC)+7): 		#More than 7 people entering should cause a sufficient change in room temperature because of body heat
+				ac_incriment = ac_incriment - 1
+			
+			if (ac_temp > 17 and ac_temp < 46):
+				ac_temp = ac_temp + ac_incriment
+				tempSensor = tempSensor + ac_incriment
 
-			print ac_temp," changed by ",ac_incriment
-			if(ac_temp>18 and ac_temp<35):
-				ac_temp+=ac_incriment
-				inside_temp+=ac_incriment
-			print inside_temp," RT "
-			nppl=len(lol)
+			print "Current Temp is: " + str(tempSensor)
 
+			nosPeople = len(arrMAC)
 
 		time.sleep(0.5)
-
-except:
-	pass
+		
+	except:
+		pass
