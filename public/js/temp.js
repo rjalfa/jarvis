@@ -8,7 +8,7 @@ function showMax()
         //if(Number(data) > 40) $(".temp").css({"color":"red"});
         //else $(".temp").css({"color":"blue"});
         var low = 0,high = 50
-        var temp = Number(data);
+        var temp = Number(data['temp']);
         var R = 0,B = 0;
         if(temp<low) B = 255;
         else if(temp>high) R = 255;
@@ -17,9 +17,10 @@ function showMax()
         	B = Math.round((high-temp)*255.0/(high-low));
         }
         $(".temp").css({"color":rgbToHex(R,0,B)});
-        $(".temp").html(data+" °C");
+        $(".temp").html(data['temp']+" °C");
+        $(".humid").html("Humidity: "+data['humid']+" %");
         setTimeout(showMax, 300);
-    });
+    },'json');
 }
 
 function componentToHex(c) {
