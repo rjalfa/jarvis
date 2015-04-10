@@ -7,7 +7,7 @@ function showMax()
 	$.get("/showData", function(data, status){
         //if(Number(data) > 40) $(".temp").css({"color":"red"});
         //else $(".temp").css({"color":"blue"});
-        var low = 0,high = 50
+        var low = 0,high = 50;
         var temp = Number(data['temp']);
         var R = 0,B = 0;
         if(temp<low) B = 255;
