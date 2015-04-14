@@ -4,10 +4,14 @@ import time
 import RPi.GPIO as GPIO
 import requests
 import serial
-
 #AC/Heater range [18,45]
 
-# BCM for GPIO pins
+def toBool(k):
+	if (k == "true"):
+		return True
+	return False
+
+# BCM for GPIO pins (read nos in rectangles)
 GPIO.setmode(GPIO.BCM)
 
 # Set pins for usage
@@ -16,99 +20,116 @@ GPIO.setup(23, GPIO.OUT)
 GPIO.setup(24, GPIO.OUT)
 GPIO.setup(25, GPIO.OUT)
 
-count=0 #Number of seconds for which room's empty
-empty=0 #If room empty : 1,else :0
-nppl=0 #Number of people in the room
+#serialData = serial.Serial('/dev/ttyUSB0',9600)							# BEWARE use lsusb to see bus number (USB0/ USB1....)
 
-appl=[18,23,24,25] #Assuming 4 appliances on 18,23,24,25 respectively
-names={18:'Fridge',23:'Music Player',24:'Oven',25:'Laptop Charger'}
-is_set=[0,0,0,0] #Tells whether appliance is ON or OFF
 
-inside_temp=26
-set_temp=25
-ac_temp=25
+countRoomEmpty = 0 		# Number of seconds for which nobody in room
+roomIsEmpty = 1 		# If room empty: 1, else: 0
+nosPeople = 0 			# Number of people in the room
+
+applianceGPIO = [18, 23, 24, 25] 										#Assuming 4 appliances on 18,23,24,25 respectively
+applianceName = {18:'Fridge', 23:'Garage Opener', 24:'Charger', 25:'Oven'}
+applianceOn = [True, True, True, True] 												#Tells whether appliance is ON or OFF
+requests.post("http://1.1.1.4:3000/postApp",params={'0':applianceOn[0], '1':applianceOn[1], '2':applianceOn[2], '3':applianceOn[3]})	# Get Appliance State
+
+
+set_temp = 25
+ac_temp = 25
 
 ac_incriment=0
 
-print "MAC Address                 Name"
+# send_to_server={'temp':inside_temp,'appliances[]':applianceOn } #Server Part
+# r=requests.get('http://localhost:3000',params=...) #:-?
+# s=requests.post("http://localhost:3000",data=send_to_server)
+
 while(1):
 	try:
-		ser = serial.Serial('/dev/ttyUSB0',  9600, timeout = 0.1) #timeout ?
-		inside_temp=ser.readline() # :-?
+		# Get data from Arduino DHT11
+		#tempSensor = int(serialData.readline().split(" ")[0][:-3])
+		#humSensor = int(serialData.readline().split(" ")[1][:-4])
 
-		r=requests.get('http://localhost:3000/getdata')
-		get_states# =?
-		# os.system('clear')
-		bluelist=bluetooth.discover_devices(duration=1,lookup_names=True)
-		# print bluelist
-		# print "count is ",count
-		# for p in range(len(bluelist)):
-			# print bluelist[p][0]+"           "+bluelist[p][1]
+		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
+		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
+		#requests.post("http://1.1.1.4:3000/temp",params={'temp':tempSensor, 'humidity':humSensor})			# Post Temp, Hum
+		print arrMAC
+		# print tempSensor
+		# print humSensor
 
-		#Get signal from server () 
-		if(get_states!=is_set):
-			for i in range(4):
-				if(get_states[i]!=is_set):
-					if(get_states[i]==0):
-						GPIO.output(appl[i],GPIO.LOW)
-					else:
-						GPIO.output(appl[i],GPIO.HIGH)	
-
-
-		if(len(bluelist)==0):
-			if(not empty):
-				# print " * Nobody Home"
-				count+=1
-			else:
-				count=0
+		applianceOn = map(toBool, requests.get("http://1.1.1.4:3000/data")._content.split(","))  			# Get Appliance State
+		if (applianceOn[0] == False):
+			GPIO.output(applianceGPIO[0], GPIO.LOW)
+			print "0 Off"
 		else:
-			if(empty==1):
+			GPIO.output(applianceGPIO[0], GPIO.HIGH)
+			print "0 On"
+
+		if (applianceOn[1] == False):
+			GPIO.output(applianceGPIO[1], GPIO.LOW)
+		else:
+			GPIO.output(applianceGPIO[1], GPIO.HIGH)
+
+		if (applianceOn[2] == False):
+			GPIO.output(applianceGPIO[2], GPIO.LOW)
+		else:
+			GPIO.output(applianceGPIO[2], GPIO.HIGH)
+
+		if (applianceOn[3] == False):
+			GPIO.output(applianceGPIO[0], GPIO.LOW)
+		else:
+			GPIO.output(applianceGPIO[0], GPIO.HIGH)
+
+		
+
+		if(len(arrMAC) == 0):
+			if(not roomIsEmpty):
+				# print " * Nobody Home"
+				countRoomEmpty+=1
+			else:
+				countRoomEmpty=0
+		else:
+			if(roomIsEmpty==1):
 				print "Powering up"
 
 				# print "Power up A/C & lights"
 				for i in range(4):
-					GPIO.output(appl[i],GPIO.HIGH)
+					GPIO.output(applianceGPIO[i],GPIO.HIGH)
 				#Update data on server
-				empty=0
 
-		if(count==10):
-			print "Powering down"
+			roomIsEmpty=0
 
-			# print "Power down all appliances"
+		# Power Down if no people for >= 4sec
+		if(countRoomEmpty == 4):
+			print "Powering Down"
 			for i in range(4):
-				GPIO.output(appl[i],GPIO.LOW)
+				GPIO.output(applianceGPIO[i],GPIO.LOW)
 
-			#Update data on server
-			count=0	
-			empty=1
+			countRoomEmpty = 0	
+			roomIsEmpty = 1
 
-		if(inside_temp>60):
+		# If fire, Sound Alarm, Power all devices down
+		if(tempSensor > 60.0):
 			print "Fire! Run!"
-
-			# print "Emergency stop to all devices and stop home automation"
 			for i in range(4):
-				GPIO.output(appl[i],GPIO.LOW)
-			#Send a distress signal to 101 ? 
+				GPIO.output(applianceGPIO[i],GPIO.LOW)
 			break
 
-		if(empty!=1):
-			if(inside_temp < set_temp):
-				ac_incriment=1
+		if(roomIsEmpty != 1):
+			if (tempSensor < set_temp):
+				ac_incriment = 1
 
-			elif(inside_temp > set_temp):
-				ac_incriment=-1
+			elif (tempSensor > set_temp):
+				ac_incriment = -1
 
-			if(nppl>len(bluelist)+7): #More than 7 people entering should cause a sufficient change in room temperature because of body-heat
-				ac_incriment+=-1
+			if (nosPeople > len(arrMAC)+7): 		#More than 7 people entering should cause a sufficient change in room temperature because of body heat
+				ac_incriment = ac_incriment - 1
+			
+			if (ac_temp > 17 and ac_temp < 46):
+				ac_temp = ac_temp + ac_incriment
+				tempSensor = tempSensor + ac_incriment
 
-			print ac_temp," changed by ",ac_incriment
-			if(ac_temp>17 and ac_temp<46):
-				ac_temp+=ac_incriment
-				inside_temp+=ac_incriment
-			print inside_temp," RT "
-			nppl=len(bluelist)
+			nosPeople = len(arrMAC)
 
-		requests.post("http://localhost:3000/data",params={'tempInt':inside_temp)
 		time.sleep(0.5)
+		
 	except:
 		pass
