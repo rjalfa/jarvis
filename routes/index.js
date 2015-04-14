@@ -5,7 +5,7 @@ var path = require('path'),
 var allMacs = "No Registered Users"    
 var currentTemp = "0";
 var currentHumid = "0";
-var appStates = [false,false,false,false];
+var appStates = [true,true,true,true];
 var mainRoutes = [];
 
 var requireRoutes = function(dir, app) {
@@ -52,7 +52,7 @@ var routes = function(app) {
         res.send({'temp':currentTemp,'humid':currentHumid});
     });
 
-    app.get('/showApp', function(req, res) {
+    app.post('/showApp', function(req, res) {
         res.send(appStates);
     });
 
@@ -79,6 +79,9 @@ var routes = function(app) {
         res.send(appStates.join());
     });
 
+    app.post('/getbmac',function(req,res){
+        res.send(allMacs);
+    });
     app.post('/',function(req,res) {
         if(allMacs === "No Registered Users") allMacs=""; 
         allMacs = req.query['bmac']+"\n";
