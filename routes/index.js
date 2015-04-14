@@ -1,12 +1,17 @@
 var path = require('path'),
     fs = require('fs');
 
-
 var allMacs = "No Registered Users"    
 var currentTemp = "0";
 var currentHumid = "0";
-var appStates = [true,true,true,true];
+var appStates = [false,false,false,false];
 var mainRoutes = [];
+
+function toBool(string)
+{
+    if(string=="True" || string =="true") return true;
+    return false;
+}
 
 var requireRoutes = function(dir, app) {
     var files = fs.readdirSync(dir).filter(function(file) {
@@ -71,7 +76,13 @@ var routes = function(app) {
     });
 
     app.post('/postApp',function(req,res) {
-        for(var i=0;i<4;i++) appStates[i] = req.body[i.toString()];
+        for(var i=0;i<4;i++) appStates[i] = toBool(req.query[i.toString()]);
+        res.send("200 ok");
+    });
+
+    app.post('/postApp2',function(req,res) {
+        for(var i=0;i<4;i++) appStates[i] = toBool(req.body[i.toString()]);
+        console.log(appStates);
         res.send("200 ok");
     });
 
