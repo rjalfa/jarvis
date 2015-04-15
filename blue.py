@@ -6,8 +6,8 @@ import requests
 import serial
 #AC/Heater range [18,45]
 
-def toBool(k):
-	if (k == "true"):
+def toBool(inpBool):
+	if (inpBool == "true"):
 		return True
 	return False
 
@@ -27,35 +27,35 @@ countRoomEmpty = 0 		# Number of seconds for which nobody in room
 roomIsEmpty = 1 		# If room empty: 1, else: 0
 nosPeople = 0 			# Number of people in the room
 
-applianceGPIO = [18, 23, 24, 25] 										#Assuming 4 appliances on 18,23,24,25 respectively
+applianceGPIO = [18, 23, 24, 25] 											#Assuming 4 appliances on 18,23,24,25 respectively
 applianceName = {18:'Fridge', 23:'Garage Opener', 24:'Charger', 25:'Oven'}
-applianceOn = [True, True, True, True] 												#Tells whether appliance is ON or OFF
+applianceOn = [True, True, True, True] 										#Tells whether appliance is ON or OFF
 requests.post("http://1.1.1.4:3000/postApp",params={'0':applianceOn[0], '1':applianceOn[1], '2':applianceOn[2], '3':applianceOn[3]})	# Get Appliance State
 
 
 set_temp = 25
 ac_temp = 25
-
 ac_incriment=0
 
-# send_to_server={'temp':inside_temp,'appliances[]':applianceOn } #Server Part
-# r=requests.get('http://localhost:3000',params=...) #:-?
-# s=requests.post("http://localhost:3000",data=send_to_server)
 
 while(1):
 	try:
 		# Get data from Arduino DHT11
 		#tempSensor = int(serialData.readline().split(" ")[0][:-3])
 		#humSensor = int(serialData.readline().split(" ")[1][:-4])
-
-		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
-		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
-		#requests.post("http://1.1.1.4:3000/temp",params={'temp':tempSensor, 'humidity':humSensor})			# Post Temp, Hum
-		print arrMAC
+		# requests.post("http://1.1.1.4:3000/temp",params={'temp':tempSensor, 'humidity':humSensor})			# Post Temp, Hum
 		# print tempSensor
 		# print humSensor
 
-		applianceOn = map(toBool, requests.get("http://1.1.1.4:3000/data")._content.split(","))  			# Get Appliance State
+
+		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
+		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
+		print arrMAC
+		
+		arrName = namerequests.get("http://1.1.1.4:3000/data")._content.split(",")							# Get Names of people
+
+		applianceOn = requests.get("http://1.1.1.4:3000/data")._content.split(",")							# Get Appliance State
+		print applianceOn
 		if (applianceOn[0] == False):
 			GPIO.output(applianceGPIO[0], GPIO.LOW)
 			print "0 Off"
@@ -80,55 +80,54 @@ while(1):
 
 		
 
-		if(len(arrMAC) == 0):
-			if(not roomIsEmpty):
-				# print " * Nobody Home"
-				countRoomEmpty+=1
-			else:
-				countRoomEmpty=0
-		else:
-			if(roomIsEmpty==1):
-				print "Powering up"
+		# if(len(arrMAC) == 0):
+		# 	if(not roomIsEmpty):
+		# 		# print " * Nobody Home"
+		# 		countRoomEmpty+=1
+		# 	else:
+		# 		countRoomEmpty=0
+		# else:
+		# 	if(roomIsEmpty==1):
+		# 		print "Powering up"
 
-				# print "Power up A/C & lights"
-				for i in range(4):
-					GPIO.output(applianceGPIO[i],GPIO.HIGH)
-				#Update data on server
+		# 		# print "Power up A/C & lights"
+		# 		for i in range(4):
+		# 			GPIO.output(applianceGPIO[i],GPIO.HIGH)
+		# 		#Update data on server
 
-			roomIsEmpty=0
+		# 	roomIsEmpty=0
 
-		# Power Down if no people for >= 4sec
-		if(countRoomEmpty == 4):
-			print "Powering Down"
-			for i in range(4):
-				GPIO.output(applianceGPIO[i],GPIO.LOW)
+		# # Power Down if no people for >= 4sec
+		# if(countRoomEmpty == 4):
+		# 	print "Powering Down"
+		# 	for i in range(4):
+		# 		GPIO.output(applianceGPIO[i],GPIO.LOW)
 
-			countRoomEmpty = 0	
-			roomIsEmpty = 1
+		# 	countRoomEmpty = 0	
+		# 	roomIsEmpty = 1
 
-		# If fire, Sound Alarm, Power all devices down
-		if(tempSensor > 60.0):
-			print "Fire! Run!"
-			for i in range(4):
-				GPIO.output(applianceGPIO[i],GPIO.LOW)
-			break
+		# # If fire, Sound Alarm, Power all devices down
+		# if(tempSensor > 60.0):
+		# 	print "Fire! Run!"
+		# 	for i in range(4):
+		# 		GPIO.output(applianceGPIO[i],GPIO.LOW)
+		# 	break
 
-		if(roomIsEmpty != 1):
-			if (tempSensor < set_temp):
-				ac_incriment = 1
+		# if(roomIsEmpty != 1):
+		# 	if (tempSensor < set_temp):
+		# 		ac_incriment = 1
 
-			elif (tempSensor > set_temp):
-				ac_incriment = -1
+		# 	elif (tempSensor > set_temp):
+		# 		ac_incriment = -1
 
-			if (nosPeople > len(arrMAC)+7): 		#More than 7 people entering should cause a sufficient change in room temperature because of body heat
-				ac_incriment = ac_incriment - 1
+		# 	if (nosPeople > len(arrMAC)+7): 		#More than 7 people entering should cause a sufficient change in room temperature because of body heat
+		# 		ac_incriment = ac_incriment - 1
 			
-			if (ac_temp > 17 and ac_temp < 46):
-				ac_temp = ac_temp + ac_incriment
-				tempSensor = tempSensor + ac_incriment
+		# 	if (ac_temp > 17 and ac_temp < 46):
+		# 		ac_temp = ac_temp + ac_incriment
+		# 		tempSensor = tempSensor + ac_incriment
 
-			nosPeople = len(arrMAC)
-
+		# 	nosPeople = len(arrMAC)
 		time.sleep(0.5)
 		
 	except:
