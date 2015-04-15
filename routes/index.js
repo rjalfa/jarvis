@@ -51,6 +51,14 @@ var routes = function(app) {
         res.render('showMac');
     });
 
+    app.get('/help', function(req, res) {
+        res.render('help');
+    });
+
+    app.get('/about', function(req, res) {
+        res.render('about');
+    });
+
     app.get('/showData', function(req, res) {
         res.send({'temp':currentTemp,'humid':currentHumid});
     });

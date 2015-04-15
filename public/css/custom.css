@@ -49,6 +49,10 @@ form .error {
     font-size: 80px;
 }
 
+.glyph {
+    font-size: 20px;
+}
+
 .panic-div {
     font-size: 40px;
     font-weight: bold;

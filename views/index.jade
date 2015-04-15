@@ -4,7 +4,17 @@ block content
   script(src='/js/home.js')
   center
     //- img(src='/images/logo-big.jpeg') -//
-    br
+    .list-group
+    a.list-group-item(href='/monitor')
+        span.glyphicon.glyphicon-asterisk.glyph  
+        span(style="font-size:20px") &nbsp;&nbsp;Temperature
+      a.list-group-item(href='/control')
+        span.glyphicon.glyphicon-wrench.glyph
+        span(style="font-size:20px") &nbsp;&nbsp;Appliance Control 
+      a.list-group-item(href='/showMacs')
+        span.glyphicon.glyphicon-user.glyph
+        span(style="font-size:20px") &nbsp;&nbsp;Bluetooth MACs
+      br
     button.home-btn.btn.btn-success.btn-circle.btn-xl(type='button')
       i.glyphicon.glyphicon-fire.fire-icon
     br
