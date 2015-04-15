@@ -2,7 +2,14 @@ extends layout
 
 block content
   script(src='/js/temp.js')
-  center.tempBox.jumbotron
-    | Current Temperature
-    .temp
-    .humid
+  .tempBox.jumbotron(style="margin:0px")
+    center
+      | Current Temperature
+      .temp
+      .humid
+   .jumbotron(style="margin:0px;background-color:LightSeaGreen;color:white;")
+      center
+        h1 AC Settings
+        br
+      #actemp
+        | Set AC Temperature

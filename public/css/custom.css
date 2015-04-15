@@ -16,6 +16,7 @@ form .error {
 
 .tempBox {
     font-size: 40px;
+    padding : 15px;
     color:#000000;
 }
 
@@ -58,4 +59,8 @@ form .error {
     font-weight: bold;
     color: red;
     font-style: italic;
+}
+
+#actemp {
+    font-size: 20px;
 }
