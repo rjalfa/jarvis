@@ -1,25 +1,50 @@
 extends layout
 
 block content
+  script(src='/js/help.js')
   .jumbotron
     center
       h1 Help
     br
-    h2 Introduction
-    br
-    h4 Home Page :
-    | Press the big, red button in the centre to call for help (Panic Button)
-    br
-    h4 Appliance Control :
-    | Out of home and forgot to turn your oven off?
-    | Have a deadline to meet at home,but your laptop isn't charged?
-    | Not a problem
-    | With the flick of a switch (literally) , turn your devices at home on or off,from anywhere
-    | Instead of switching everything off,you can use the 'All Off' button to switch everything off
-    br
-    h4 Temperature Control :
-    | Out in the scorching heat and can't wait to get home and chill?
-    | Not a problem, J.A.R.V.I.S has got your back
-    | Just set your desired temperature preference,and your home will be cool by the time you get home
-    | You can monitor the temperature at your home at well (god knows why you would need that :p)
-
+    //- h2 Introduction
+    //- br
+    //- h4 Home Page :
+    //- | Press the big, red button in the centre to call for help (Panic Button)
+    //- br
+    //- h4 Appliance Control :
+    //- | Out of home and forgot to turn your oven off?
+    //- | Have a deadline to meet at home,but your laptop isn't charged?
+    //- | Not a problem
+    //- | With the flick of a switch (literally) , turn your devices at home on or off,from anywhere
+    //- | Instead of switching everything off,you can use the 'All Off' button to switch everything off
+    //- br
+    //- h4 Temperature Control :
+    //- | Out in the scorching heat and can't wait to get home and chill?
+    //- | Not a problem, J.A.R.V.I.S has got your back
+    //- | Just set your desired temperature preference,and your home will be cool by the time you get home
+    //- | You can monitor the temperature at your home at well (god knows why you would need that :p)
+    #accordion
+      h3 Home Page
+      |   
+      div
+        p
+          | Press the big, red button in the centre to call for help (Panic Button)
+      |   
+      h3 Appliance Control
+      |   
+      div
+        p
+          | Out of home and forgot to turn your oven off?
+          | Have a deadline to meet at home,but your laptop isn't charged?
+          | Not a problem
+          | With the flick of a switch (literally) , turn your devices at home on or off,from anywhere
+          | Instead of switching everything off,you can use the 'All Off' button to switch everything off
+      |   
+      h3 Temperature Control
+      |   
+      div
+        p
+          | Out in the scorching heat and can't wait to get home and chill?
+          | Not a problem, J.A.R.V.I.S has got your back
+          | Just set your desired temperature preference,and your home will be cool by the time you get home
+          | You can monitor the temperature at your home at well (god knows why you would need that :p)
