@@ -1,10 +1,17 @@
 extends layout
 
 block content
+  script(src='/js/home.js')
   center
-    img(src='/images/logo-big.jpeg')
-  h2.display-data Routes
-  ul
-    each route in mainRoutes
-      li
-        a(href="#{route.route}")= route.name
+    //- img(src='/images/logo-big.jpeg') -//
+    br
+    button.home-btn.btn.btn-success.btn-circle.btn-xl(type='button')
+      i.glyphicon.glyphicon-fire.fire-icon
+    br
+    .panic-div
+      | Help is on the way!
+  //- h2.display-data Routes
+  //- ul
+  //-   each route in mainRoutes
+  //-     li
+  //-       a(href="#{route.route}")= route.name

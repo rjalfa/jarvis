@@ -20,9 +20,7 @@ var requireRoutes = function(dir, app) {
 
     files.forEach(function(file) {
         var absolutePath = path.join(dir, file);
-
         var stat = fs.statSync(absolutePath);
-
         if (stat.isFile()) {
             try {
                 var defineRoutes = require(absolutePath);
