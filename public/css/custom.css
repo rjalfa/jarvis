@@ -64,3 +64,11 @@ form .error {
 #actemp {
     font-size: 20px;
 }
+
+#acTempBox {
+    height:80px;
+    width:200px;
+    text-align: center;
+    font-size:50px;
+    color:#FFF;
+}

@@ -1,5 +1,15 @@
+var acTemp = 0;
 
 $(document).ready(function(){
+    $("#acTempBox").html(acTemp+" °C");    
+    $(".btn-ac-dec").click(function(){
+        acTemp -= 1
+        $("#acTempBox").html(acTemp+" °C");    
+    });
+    $(".btn-ac-inc").click(function(){
+        acTemp += 1
+        $("#acTempBox").html(acTemp+" °C");    
+    });
     showMax();
 });
 
