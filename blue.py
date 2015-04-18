@@ -33,13 +33,15 @@ applianceOn = [True, True, True, True] 										#Tells whether appliance is ON 
 requests.post("http://1.1.1.4:3000/postApp",params={'0':applianceOn[0], '1':applianceOn[1], '2':applianceOn[2], '3':applianceOn[3]})	# Get Appliance State
 
 
-set_temp = 25
-ac_temp = 25
-ac_incriment=0
+set_temp = 25 #Temperature required
+ac_temp = 25 #Operating temperature of AC at any given time
+ac_incriment=0 #REquired change in ac_temp to achieve desired temperature
+user_perm=0 #Defines permission of user
 
 
 while(1):
 	try:
+		user_perm=0 #0 by default
 		# Get data from Arduino DHT11
 		#tempSensor = int(serialData.readline().split(" ")[0][:-3])
 		#humSensor = int(serialData.readline().split(" ")[1][:-4])
@@ -49,6 +51,7 @@ while(1):
 
 		set_temp=int(requests.get("http://localhost:3000/atb")._content) #The temperature user wants
 		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
+		
 		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
 		print arrMAC
 		
