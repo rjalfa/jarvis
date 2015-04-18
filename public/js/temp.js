@@ -1,14 +1,19 @@
 var acTemp = 0;
 
 $(document).ready(function(){
+    $.get('/atmg',function(data,status){
+        acTemp = data['temp'];
+    });
     $("#acTempBox").html(acTemp+" °C");    
     $(".btn-ac-dec").click(function(){
         acTemp -= 1
-        $("#acTempBox").html(acTemp+" °C");    
+        $("#acTempBox").html(acTemp+" °C");
+        $.post('/actempmon',{'temp':acTemp.toString()});
     });
     $(".btn-ac-inc").click(function(){
         acTemp += 1
-        $("#acTempBox").html(acTemp+" °C");    
+        $("#acTempBox").html(acTemp+" °C");
+        $.post('/actempmon',{'temp':acTemp.toString()});    
     });
     showMax();
 });

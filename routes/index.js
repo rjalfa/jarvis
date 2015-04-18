@@ -6,6 +6,7 @@ var currentTemp = "0";
 var currentHumid = "0";
 var appStates = [false,false,false,false];
 var mainRoutes = [];
+var acTemp = 0;
 
 function toBool(string)
 {
@@ -84,6 +85,24 @@ var routes = function(app) {
     app.post('/postApp',function(req,res) {
         for(var i=0;i<4;i++) appStates[i] = toBool(req.query[i.toString()]);
         res.send("200 ok");
+    });
+
+    app.post('/actempblue',function(req,res) {
+        acTemp = parseInt(req.query['actemp']);
+        res.send("200 OK");
+    });
+
+    app.get('/atmg',function(req,res){
+        res.send({'temp':acTemp});
+    })
+
+    app.get('/atb',function(req,res){
+        res.send(acTemp.toString());
+    });
+
+    app.post('/actempmon',function(req,res){
+        acTemp = parseInt(req.body['temp']);
+        res.send("done!");
     });
 
     app.post('/postApp2',function(req,res) {

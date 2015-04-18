@@ -23,7 +23,6 @@ $(document).ready(function(){
 		sendData();
 	});
 	$("[name='my-checkbox']").on('switchChange.bootstrapSwitch',function(){
-		console.log($("#box1").bootstrapSwitch('state'))
 		if(flag) sendData();
 	});
 });
