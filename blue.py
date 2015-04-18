@@ -47,7 +47,7 @@ while(1):
 		# print tempSensor
 		# print humSensor
 
-
+		set_temp=int(requests.get("http://localhost:3000/atb")._content) #The temperature user wants
 		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
 		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
 		print arrMAC
@@ -128,6 +128,7 @@ while(1):
 		# 		tempSensor = tempSensor + ac_incriment
 
 		# 	nosPeople = len(arrMAC)
+		requests.post("http://localhost:3000/actempblue",params={'actemp':ac_temp}) #Current temperature the AC is set at.
 		time.sleep(0.5)
 		
 	except:
