@@ -37,7 +37,7 @@ set_temp = 25 #Temperature required
 ac_temp = 25 #Operating temperature of AC at any given time
 ac_incriment=0 #REquired change in ac_temp to achieve desired temperature
 user_perm=0 #Defines permission of user
-
+rmac = []
 
 while(1):
 	try:
@@ -51,7 +51,8 @@ while(1):
 
 		set_temp=int(requests.get("http://1.1.1.4:3000/atb")._content) #The temperature user wants
 		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
-		
+		rmac = requests.get("http://localhost:3000/userData")._content.split(",")
+		rmac = rmac[:len(rmac)-1]
 		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
 		print arrMAC
 		
