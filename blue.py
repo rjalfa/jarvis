@@ -1,4 +1,3 @@
-import bluetooth
 import os 
 import time
 import RPi.GPIO as GPIO
@@ -22,25 +21,26 @@ GPIO.setup(25, GPIO.OUT)
 
 #serialData = serial.Serial('/dev/ttyUSB0',9600)							# BEWARE use lsusb to see bus number (USB0/ USB1....)
 
-
 countRoomEmpty = 0 		# Number of seconds for which nobody in room
 roomIsEmpty = 1 		# If room empty: 1, else: 0
-nosPeople = 0 			# Number of people in the room
+# nosPeople = 0 			# Number of people in the room
 
 applianceGPIO = [18, 23, 24, 25] 											#Assuming 4 appliances on 18,23,24,25 respectively
 applianceName = {18:'Fridge', 23:'Garage Opener', 24:'Charger', 25:'Oven'}
 applianceOn = [True, True, True, True] 										#Tells whether appliance is ON or OFF
 requests.post("http://1.1.1.4:3000/postApp",params={'0':applianceOn[0], '1':applianceOn[1], '2':applianceOn[2], '3':applianceOn[3]})	# Get Appliance State
 
-
 set_temp = 25 #Temperature required
 ac_temp = 25 #Operating temperature of AC at any given time
 ac_incriment=0 #REquired change in ac_temp to achieve desired temperature
 user_perm=0 #Defines permission of user
+previously=0 #Number of people in the room before scanning the file
 rmac = []
 
 while(1):
 	try:
+		interm_file=open('workspace.txt','r')
+		nosPeople=int(interm_file.read())
 		user_perm=0 #0 by default
 		# Get data from Arduino DHT11
 		#tempSensor = int(serialData.readline().split(" ")[0][:-3])
@@ -50,41 +50,21 @@ while(1):
 		# print humSensor
 
 		set_temp=int(requests.get("http://1.1.1.4:3000/atb")._content) #The temperature user wants
-		arrMAC = bluetooth.discover_devices()																# add parameter duration = secToScan if needed
 		rmac = requests.get("http://localhost:3000/userData")._content.split(",")
 		rmac = rmac[:len(rmac)-1]
 		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
-		print arrMAC
 		
 		arrName = namerequests.get("http://1.1.1.4:3000/data")._content.split(",")							# Get Names of people
-
 		applianceOn = requests.get("http://1.1.1.4:3000/data")._content.split(",")							# Get Appliance State
 		print applianceOn
-		if (applianceOn[0] == False):
-			GPIO.output(applianceGPIO[0], GPIO.LOW)
-			print "0 Off"
-		else:
-			GPIO.output(applianceGPIO[0], GPIO.HIGH)
-			print "0 On"
 
-		if (applianceOn[1] == False):
-			GPIO.output(applianceGPIO[1], GPIO.LOW)
-		else:
-			GPIO.output(applianceGPIO[1], GPIO.HIGH)
+		for i in range(4):
+			if (applianceOn[i] == False):
+				GPIO.output(applianceGPIO[i], GPIO.LOW)
+			else:
+				GPIO.output(applianceGPIO[i], GPIO.HIGH)		
 
-		if (applianceOn[2] == False):
-			GPIO.output(applianceGPIO[2], GPIO.LOW)
-		else:
-			GPIO.output(applianceGPIO[2], GPIO.HIGH)
-
-		if (applianceOn[3] == False):
-			GPIO.output(applianceGPIO[0], GPIO.LOW)
-		else:
-			GPIO.output(applianceGPIO[0], GPIO.HIGH)
-
-		
-
-		# if(len(arrMAC) == 0):
+		# if(nosPeople == 0):
 		# 	if(not roomIsEmpty):
 		# 		# print " * Nobody Home"
 		# 		countRoomEmpty+=1
@@ -124,16 +104,16 @@ while(1):
 		# 	elif (tempSensor > set_temp):
 		# 		ac_incriment = -1
 
-		# 	if (nosPeople > len(arrMAC)+7): 		#More than 7 people entering should cause a sufficient change in room temperature because of body heat
+		# 	if (nosPeople > previously+7): 		#More than 7 people entering should cause a sufficient change in room temperature because of body heat
 		# 		ac_incriment = ac_incriment - 1
 			
 		# 	if (ac_temp > 17 and ac_temp < 46):
 		# 		ac_temp = ac_temp + ac_incriment
 		# 		tempSensor = tempSensor + ac_incriment
 
-		# 	nosPeople = len(arrMAC)
+		# 	nosPeople = nosPeople
 		requests.post("http://1.1.1.4:3000/actempblue",params={'actemp':ac_temp}) #Current temperature the AC is set at.
 		time.sleep(0.5)
-		
+		previously=nosPeople
 	except:
 		pass

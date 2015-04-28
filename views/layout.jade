@@ -47,4 +47,13 @@ html
       script(src='/js/bootstrap-slider.js')
       //-script(src='http://cdnjs.cloudflare.com/ajax/libs/noUiSlider/6.2.0/jquery.nouislider.min.js') 
     .container(style="padding-top:80px")
+      .modal.alert-modal
+        .modal-dialog
+            .modal-content
+              .modal-header
+                button.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+                |                 
+                h4.modal-title Notification
+              |             
+              .modal-body
       block content
