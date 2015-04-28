@@ -8,7 +8,7 @@ var currentHumid = "0";
 var appStates = [false,false,false,false];
 var mainRoutes = [];
 var acTemp = 0;
-
+var nop = 0;
 function toBool(string)
 {
     if(string=="True" || string =="true") return true;
@@ -89,6 +89,18 @@ var routes = function(app) {
         });
     });
 
+    app.get('/userName',function(req,res){
+        /*mongoose.connect("mongodb://localhost/database", function(err, db) {
+          var collection = db.collection('user');
+          console.log(collection.find().toArray(function(err, items) {}));
+        });*/
+        s = ''
+        User.find({}, function (err, docs) {
+            for(var i=0;i<docs.length;i++) s += docs[i]['name']+','
+            res.send(s);
+        });
+    });
+
     app.post('/temp',function(req,res) {
         currentTemp = req.query['temp'];
         currentHumid = req.query['humidity'];
@@ -127,6 +139,15 @@ var routes = function(app) {
     app.get('/data',function(req,res){
         res.send(appStates.join());
     });
+
+    app.post('/nosPeople',function(req,res){
+        nop = parseInt(req.query['nosPeople'])
+        res.send("done");
+    });
+
+    app.get('/nosPeople2',function(req,res) {
+        res.send(nop.toString());
+    })
 
     app.post('/getbmac',function(req,res){
         res.send(allMacs);

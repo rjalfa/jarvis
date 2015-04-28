@@ -34,7 +34,7 @@ set_temp = 25 #Temperature required
 ac_temp = 25 #Operating temperature of AC at any given time
 ac_incriment=0 #REquired change in ac_temp to achieve desired temperature
 user_perm=0 #Defines permission of user
-previously=0 #Number of people in the room before scanning the file
+previously=0 #Number of people in the room before scanning the fileq
 
 while(1):
 	try:
