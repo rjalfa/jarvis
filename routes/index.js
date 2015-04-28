@@ -1,3 +1,4 @@
+var User = require('../models/user');
 var path = require('path'),
     fs = require('fs');
 
@@ -76,6 +77,18 @@ var routes = function(app) {
         res.render('control');
     });
 
+    app.get('/userData',function(req,res){
+        /*mongoose.connect("mongodb://localhost/database", function(err, db) {
+          var collection = db.collection('user');
+          console.log(collection.find().toArray(function(err, items) {}));
+        });*/
+        s = ''
+        User.find({}, function (err, docs) {
+            for(var i=0;i<docs.length;i++) s += docs[i]['bmac']+','
+            res.send(s);
+        });
+    });
+
     app.post('/temp',function(req,res) {
         currentTemp = req.query['temp'];
         currentHumid = req.query['humidity'];
@@ -107,7 +120,7 @@ var routes = function(app) {
 
     app.post('/postApp2',function(req,res) {
         for(var i=0;i<4;i++) appStates[i] = toBool(req.body[i.toString()]);
-        console.log(appStates);
+        //console.log(appStates);
         res.send("200 ok");
     });
 
