@@ -3,7 +3,6 @@ import time
 import RPi.GPIO as GPIO
 import requests
 import serial
-import pickle
 #AC/Heater range [18,45]
 
 def toBool(inpBool):
@@ -33,7 +32,7 @@ requests.post("http://1.1.1.4:3000/postApp",params={'0':applianceOn[0], '1':appl
 
 set_temp = 25 #Temperature required
 ac_temp = 25 #Operating temperature of AC at any given time
-ac_incriment = 0 #REquired change in ac_temp to achieve desired temperature
+ac_incriment = 0 #Required change in ac_temp to achieve desired temperature
 previously = 0 #Number of people in the room before scanning the file
 
 while(1):
@@ -45,10 +44,10 @@ while(1):
 		# print humSensor
 
 		set_temp = int(requests.get("http://1.1.1.4:3000/atb")._content) 									#The temperature user wants
-
+		# Get appliance states from server
 		applianceOn = requests.get("http://1.1.1.4:3000/data")._content.split(",")							# Get Appliance State
 		print "Appliance On: " + str(applianceOn)
-
+		# Get no. of people from server
 		nosPeople = int(requests.get("http://1.1.1.4:3000/nosPeople2")._content)
 		print "Nos of People: " + str(nosPeople)
 
@@ -76,6 +75,7 @@ while(1):
 				applianceGPIO[i] = 'false'
 			countRoomEmpty = 0	
 			roomIsEmpty = 1
+			requests.post("http://1.1.1.4:3000/postApp",params={'0':applianceOn[0], '1':applianceOn[1], '2':applianceOn[2], '3':applianceOn[3]})
 
 		# # If fire, Sound Alarm, Power all devices down
 		# if(tempSensor > 60.0):
@@ -99,6 +99,7 @@ while(1):
 		# 		tempSensor = tempSensor + ac_incriment
 
 		# 	nosPeople = nosPeople
+		# send the ac temperature to server
 		requests.post("http://1.1.1.4:3000/actempblue",params={'actemp':ac_temp}) #Current temperature the AC is set at.
 		time.sleep(0.5)
 		previously=nosPeople
