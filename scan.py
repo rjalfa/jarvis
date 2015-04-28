@@ -6,7 +6,7 @@ temp=open('workspace.txt','w')
 r = 0
 while(1):
 	try:
-		rmac = requests.get("http://localhost:3000/userData")._content.split(",")
+		rmac = requests.get("http://1.1.1.4:3000/userData")._content.split(",")
 		rmac = rmac[:len(rmac)-1]
 		rmac=set(rmac)
 		arrMac = bluetooth.discover_devices(duration=1,lookup_names=False)

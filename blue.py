@@ -35,7 +35,6 @@ ac_temp = 25 #Operating temperature of AC at any given time
 ac_incriment=0 #REquired change in ac_temp to achieve desired temperature
 user_perm=0 #Defines permission of user
 previously=0 #Number of people in the room before scanning the file
-rmac = []
 
 while(1):
 	try:
@@ -50,8 +49,6 @@ while(1):
 		# print humSensor
 
 		set_temp=int(requests.get("http://1.1.1.4:3000/atb")._content) #The temperature user wants
-		rmac = requests.get("http://localhost:3000/userData")._content.split(",")
-		rmac = rmac[:len(rmac)-1]
 		requests.post("http://1.1.1.4:3000/",params={'bmac':arrMAC})										# Post bluetooth																															
 		
 		arrName = namerequests.get("http://1.1.1.4:3000/data")._content.split(",")							# Get Names of people
