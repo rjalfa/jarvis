@@ -2,17 +2,24 @@ import time
 import bluetooth
 import requests
 
-temp=open('workspace.txt','w')
-r = 0
 while(1):
 	try:
-		rmac = requests.get("http://1.1.1.4:3000/userData")._content.split(",")
-		rmac = rmac[:len(rmac)-1]
-		rmac=set(rmac)
-		arrMac = bluetooth.discover_devices(duration=1,lookup_names=False)
-		arrMac=set(arrMac)
-		valid_people=arrMac.intersection(rmac)
-		r = len(valid_people)
-		print "people: ",r
+		macServer = requests.get("http://1.1.1.4:3000/userData")._content.split(",")
+		macServer = macServer[:len(macServer)-1]
+		macServer = set(macServer)
+
+		namesServer =  requests.get("http://1.1.1.4:3000/userName")._content.split(",")
+		namesServer = namesServer[:len(namesServer)-1]
+
+		macScan = bluetooth.discover_devices(lookup_names = False, duration = 1)
+		macScan = set(macScan)
+		filteredPeople = macScan.intersection(macServer)
+
+		print macServer
+		print namesServer
+		print filteredPeople
+		print len(filteredPeople)
+		requests.post("http://1.1.1.4:3000/nosPeople",params={'nosPeople':len(filteredPeople)})
+
 	except:
 		pass
