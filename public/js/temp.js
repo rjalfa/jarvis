@@ -1,9 +1,7 @@
 var acTemp = 0;
 
 $(document).ready(function(){
-    $.get('/atmg',function(data,status){
-        acTemp = data['temp'];
-    });
+    
     $("#acTempBox").html(acTemp+" °C");    
     $(".btn-ac-dec").click(function(){
         acTemp -= 1
@@ -21,8 +19,6 @@ $(document).ready(function(){
 function showMax()
 {
 	$.get("/showData", function(data, status){
-        //if(Number(data) > 40) $(".temp").css({"color":"red"});
-        //else $(".temp").css({"color":"blue"});
         var low = 0,high = 50;
         var temp = Number(data['temp']);
         var R = 0,B = 0;
@@ -35,8 +31,12 @@ function showMax()
         $(".temp").css({"color":rgbToHex(R,0,B)});
         $(".temp").html(data['temp']+" °C");
         $(".humid").html("Humidity: "+data['humid']+" %");
-        setTimeout(showMax, 300);
     },'json');
+    $.get('/atmg',function(data,status){
+        acTemp = data['temp'];
+        $("#acTempBox").html(acTemp+" °C");
+    });
+    setTimeout(showMax, 300);
 }
 
 function componentToHex(c) {
