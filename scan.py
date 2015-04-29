@@ -9,12 +9,12 @@ newName = []
 while(1):
 	try:
 		# Get all registered MACs from server
-		macServer = requests.get("http://1.1.1.4:3000/userData")._content.split(",")
+		macServer = requests.get("http://1.1.1.3:3000/userData")._content.split(",")
 		macServer = macServer[:len(macServer)-1]
 		macServerSet = set(macServer)
 
 		# Get all registered UserNames from server
-		namesServer =  requests.get("http://1.1.1.4:3000/userName")._content.split(",")
+		namesServer =  requests.get("http://1.1.1.3:3000/userName")._content.split(",")
 		namesServer = namesServer[:len(namesServer)-1]
 
 		# Scan bluetooth for available MACs
@@ -53,7 +53,7 @@ while(1):
 		print "New Entries     : " + str(newName)
 		print len(filteredPeople)
 
-		requests.post("http://1.1.1.4:3000/nosPeople",params={'nosPeople':len(filteredPeople)})
+		requests.post("http://1.1.1.3:3000/nosPeople",params={'nosPeople':len(filteredPeople)})
 
 		prevMac = filteredPeople
 		newMac = []
