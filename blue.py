@@ -5,11 +5,6 @@ import requests
 import serial
 #AC/Heater range [18,45]
 
-def toBool(inpBool):
-	if (inpBool == "true"):
-		return True
-	return False
-
 # BCM for GPIO pins (read nos in rectangles)
 GPIO.setmode(GPIO.BCM)
 
