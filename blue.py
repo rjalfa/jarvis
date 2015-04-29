@@ -84,12 +84,15 @@ while(1):
 
 		# Open Garage
 		# ----------------------------------------
+		print "-----------test" + str(roomIsEmpty)
+		print "-----------test" + str(nosPeoplePrev)
+		print "-----------test" + str(nosPeople)
 
-		if(roomIsEmpty == 0):
-			acTemp = acTemp - (nosPeople - nosPeoplePrev)
-						
-			if (acTemp < 15 or acTemp > 46):
-				acTemp = acTemp
+		acTemp = int(requests.get("http://1.1.1.4:3000/acTempRec")._content)
+		if (acTemp > 15 and acTemp < 46):
+			acTemp = acTemp - (nosPeople - nosPeoplePrev)*5
+		
+				
 
 		# send the ac temperature to server
 		requests.post("http://1.1.1.4:3000/acTempSend",params={'actemp':acTemp}) 			# Send AC Temp
