@@ -9,6 +9,7 @@ var appStates = [false,false,false,false];
 var mainRoutes = [];
 var acTemp = 0;
 var nop = 0;
+var panic = false;
 function toBool(string)
 {
     if(string=="True" || string =="true") return true;
@@ -51,6 +52,16 @@ var routes = function(app) {
 
     app.get('/showMacs', function(req, res) {
         res.render('showMac');
+    });
+
+    app.post('/setpanic',function(req,res) {
+        panic = req.body["p"] == "true" ? true : false
+        res.send("OK");
+    });
+
+    app.get('/panic',function(req,res) {
+        if(panic) res.send("1");
+        else res.send("0");
     });
 
     app.get('/help', function(req, res) {
@@ -112,7 +123,7 @@ var routes = function(app) {
         res.send("200 ok");
     });
 
-    app.post('/actempblue',function(req,res) {
+    app.post('/acTempSend',function(req,res) {
         acTemp = parseInt(req.query['actemp']);
         res.send("200 OK");
     });
@@ -121,7 +132,7 @@ var routes = function(app) {
         res.send({'temp':acTemp});
     })
 
-    app.get('/atb',function(req,res){
+    app.get('/acTempRec',function(req,res){
         res.send(acTemp.toString());
     });
 
