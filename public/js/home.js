@@ -6,8 +6,15 @@ $(document).ready(function(){
 		$('.home-btn').toggleClass('btn-danger');
 		$('.panic-div').toggle();
 		if($('.home-btn').hasClass("btn-danger")) panic = true;
-		else panic = false;
+		else panic = false;	
 		setPanic();
+		panic = false;
+		setPanic();
+		setTimeout(function() {
+			$('.home-btn').removeClass("btn-danger");
+			$('.home-btn').addClass("btn-success");
+			$('.panic-div').hide();
+		}, 1000);
 	})
 });
 
