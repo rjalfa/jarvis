@@ -37,7 +37,10 @@ while(1):
 		if (len(newName) == 1):
 			subprocess.Popen(["pico2wave", "--lang=en-US", "--wave=/home/pi/Desktop/ied/jarvis/names.wav", "Hello" + str(newName[0])])
 			subprocess.Popen(["mplayer", "names.wav"])
-		elif (len(newName) > 1):
+		elif (len(newName) == 2):
+			subprocess.Popen(["pico2wave", "--lang=en-US", "--wave=/home/pi/Desktop/ied/jarvis/names.wav", "Hello" + str(newName[0]) + "and" + str(newName[1])])
+			subprocess.Popen(["mplayer", "names.wav"])
+		elif (len(newName) > 2):
 			subprocess.Popen(["pico2wave", "--lang=en-US", "--wave=/home/pi/Desktop/ied/jarvis/names.wav", "Hello People"])
 			subprocess.Popen(["mplayer", "names.wav"])
 
