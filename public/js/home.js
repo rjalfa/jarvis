@@ -8,12 +8,12 @@ $(document).ready(function(){
 		if($('.home-btn').hasClass("btn-danger")) panic = true;
 		else panic = false;	
 		setPanic();
-		panic = false;
-		setPanic();
 		setTimeout(function() {
 			$('.home-btn').removeClass("btn-danger");
 			$('.home-btn').addClass("btn-success");
 			$('.panic-div').hide();
+			panic = false;
+			setPanic();
 		}, 1000);
 	})
 });
