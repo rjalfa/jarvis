@@ -37,6 +37,9 @@ acTemp = 22 			# Temperature required
 requests.post("http://1.1.1.4:3000/acTempSend",params={'actemp':acTemp})
 nosPeoplePrev = 0 			# Number of people in the room before scanning the file
 
+subprocess.Popen(["pico2wave", "--lang=en-US", "--wave=/home/pi/Desktop/ied/jarvis/intro.wav", "Booting up system"])
+subprocess.Popen(["mplayer", "intro.wav"])
+
 while(1):
 	try:
 		# tempSensor = int(serialTemp.readline().split(" ")[0][:-3])
